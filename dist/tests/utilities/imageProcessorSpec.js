@@ -40,6 +40,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var file_type_1 = __importDefault(require("file-type"));
+var image_size_1 = __importDefault(require("image-size"));
 var imageProcessor_1 = require("../../utilities/imageProcessor");
 describe('Test image processor using sharp', function () {
     it('expect the input file fjord exist', function () {
@@ -52,7 +53,6 @@ describe('Test image processor using sharp', function () {
         var exist = imageProcessor_1.fileExists(imageName);
         expect(exist).toBeFalse();
     });
-    // {success: boolean, output: string, error: string}
     it('expect the image return is jpg file', function () { return __awaiter(void 0, void 0, void 0, function () {
         var imageName, dimension, result, type;
         return __generator(this, function (_a) {
@@ -72,7 +72,25 @@ describe('Test image processor using sharp', function () {
             }
         });
     }); });
-    xit('expect the null when resize the image does not exist', function () { return __awaiter(void 0, void 0, void 0, function () {
+    it('expect the return image size is 200x200', function () { return __awaiter(void 0, void 0, void 0, function () {
+        var imageName, dimension, result, size;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    imageName = 'fjord';
+                    dimension = 200;
+                    return [4 /*yield*/, imageProcessor_1.resize(imageName, dimension, dimension)];
+                case 1:
+                    result = _a.sent();
+                    expect(result.success).toBeTrue();
+                    size = image_size_1.default(result.outputImage);
+                    expect(size.width).toBe(dimension);
+                    expect(size.height).toBe(dimension);
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+    it('expect sucess is false when resize the image does not exist', function () { return __awaiter(void 0, void 0, void 0, function () {
         var imageName, dimension, result;
         return __generator(this, function (_a) {
             switch (_a.label) {
@@ -82,22 +100,22 @@ describe('Test image processor using sharp', function () {
                     return [4 /*yield*/, imageProcessor_1.resize(imageName, dimension, dimension)];
                 case 1:
                     result = _a.sent();
-                    expect(result).toBeNull();
+                    expect(result.success).toBeFalse();
                     return [2 /*return*/];
             }
         });
     }); });
-    xit('expect the null when resize the image with negative dimension', function () { return __awaiter(void 0, void 0, void 0, function () {
+    it('expect sucess is false when resize the image with negative dimension', function () { return __awaiter(void 0, void 0, void 0, function () {
         var imageName, dimension, result;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    imageName = 'fjord.jpg';
+                    imageName = 'fjord';
                     dimension = -200;
                     return [4 /*yield*/, imageProcessor_1.resize(imageName, dimension, dimension)];
                 case 1:
                     result = _a.sent();
-                    expect(result).toBeNull();
+                    expect(result.success).toBeFalse();
                     return [2 /*return*/];
             }
         });

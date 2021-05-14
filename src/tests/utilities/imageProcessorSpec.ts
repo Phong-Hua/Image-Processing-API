@@ -1,4 +1,5 @@
 import fileType from 'file-type';
+import imageSize from 'image-size';
 import {resize, fileExists} from '../../utilities/imageProcessor';
 
 describe('Test image processor using sharp', ()=>{
@@ -15,7 +16,6 @@ describe('Test image processor using sharp', ()=>{
         expect(exist).toBeFalse();
     });
 
-    // {success: boolean, output: string, error: string}
     it('expect the image return is jpg file', async()=>{
         const imageName = 'fjord';
         const dimension = 200;
@@ -26,17 +26,29 @@ describe('Test image processor using sharp', ()=>{
         expect(type?.ext).toEqual('jpg');
     });
 
-    it('expect the null when resize the image does not exist', async()=>{
+    it('expect the return image size is 200x200', async()=>{
+        const imageName = 'fjord';
+        const dimension = 200;
+        const result = await resize(imageName, dimension, dimension);
+        expect(result.success).toBeTrue();
+
+        const size = imageSize((result.outputImage as unknown) as string);
+        expect(size.width).toBe(dimension);
+        expect(size.height).toBe(dimension);
+    })
+
+
+    it('expect sucess is false when resize the image does not exist', async()=>{
         const imageName = 'imageDoesnotExist';
         const dimension = 200;
         const result = await resize(imageName, dimension, dimension);
-        expect(result).toBeNull();
+        expect(result.success).toBeFalse();
     })
 
-    it('expect the null when resize the image with negative dimension', async()=>{
-        const imageName = 'fjord.jpg';
+    it('expect sucess is false when resize the image with negative dimension', async()=>{
+        const imageName = 'fjord';
         const dimension = -200;
         const result = await resize(imageName, dimension, dimension);
-        expect(result).toBeNull();
+        expect(result.success).toBeFalse();
     })
 })

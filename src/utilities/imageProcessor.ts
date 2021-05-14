@@ -23,7 +23,7 @@ export const resize = async (imageName: string, width: number, height: number) =
     }
     catch (err)
     {
-        return {success : true, outputImage : undefined, error : err}
+        return {success : false, outputImage : undefined, error : err}
     }
 }
 

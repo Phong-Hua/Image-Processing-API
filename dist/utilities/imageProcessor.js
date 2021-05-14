@@ -64,7 +64,7 @@ var resize = function (imageName, width, height) { return __awaiter(void 0, void
                 return [2 /*return*/, { success: true, outputImage: outputImage, error: undefined }];
             case 3:
                 err_1 = _a.sent();
-                return [2 /*return*/, { success: true, outputImage: undefined, error: err_1 }];
+                return [2 /*return*/, { success: false, outputImage: undefined, error: err_1 }];
             case 4: return [2 /*return*/];
         }
     });
