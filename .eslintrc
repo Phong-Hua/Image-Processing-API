@@ -1,11 +1,15 @@
 {
     "root": true,
+    "parser": "@typescript-eslint/parser",
     "plugins": [
       "prettier",
-      "jasmine"
+      "jasmine",
+      "@typescript-eslint"
     ],
     "extends": [
       "eslint:recommended",
+      "plugin:@typescript-eslint/eslint-recommended",
+      "plugin:@typescript-eslint/recommended",
       "prettier"
     ],
     "rules": {
@@ -15,7 +19,9 @@
       "prefer-const": "error"
     },
     "parserOptions": {
-      "ecmaVersion": 2017
+      "parser": "babel-eslint",
+      "ecmaVersion": 2018,
+      "sourceType": "module"
     },
     "env": {
       "node": true,

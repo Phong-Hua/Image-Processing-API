@@ -1,34 +1,67 @@
 import supertest from 'supertest';
 import app from '../../../index';
+import { fileExists } from '../../../utilities/imageProcessor';
 
-describe("Testing image endpoint", ()=>{
+describe('Testing image endpoint', () => {
+  let request: supertest.SuperTest<supertest.Test>;
+  beforeAll(function () {
+    request = supertest(app);
+  });
 
-    // let request : supertest.SuperTest<supertest.Test>;
-    // beforeAll(function(){
-    //     request = supertest(app);
-    // })
+  it('expect status 200 when request an existing image with positive dimension', async () => {
+    const imageName = 'fjord';
+    const dimension = 200;
+    const url = `/api/images?filename=${imageName}&width=${dimension}&height=${dimension}`;
 
-    // it("expect to receive status 200 when visit /api/images endpoint", async(done)=>{
-    //     const url = '/api/images';
-    //     const response = await request.get(url);
-    //     expect(response.statusCode).toBe(200);
-    //     done();
-    // })
+    const response = await request.get(url);
+    expect(response.statusCode).toBe(200);
+  });
+  it('expect status 400 when request an exist that does not exist', async () => {
+    const imageName = 'thisimagedoesnotexist';
+    expect(fileExists(imageName)).toBeFalse();
 
-    // it("expect to receive status 200 when request image filename='fjord.jpg' ", async(done)=>{
-    //     const image = 'fjord.jpg';
-    //     const url = `/api/images?filename=${image}`;
-    //     const response = await request.get(url);
-    //     expect(response.statusCode).toBe(200);
-    //     done();
-    // })
+    const dimension = 200;
+    const url = `/api/images?filename=${imageName}&width=${dimension}&height=${dimension}`;
 
-    // it("expect to receive status 200 when request image filename='fjord.jpg' with width=200 and height=200", async(done)=>{
-    //     const image = 'fjord.jpg';
-    //     const dimension = 200;
-    //     const url = `/api/images?filename=${image}&width=${dimension}&height=${dimension}`;
-    //     const response = await request.get(url);
-    //     expect(response.statusCode).toBe(200);
-    //     done();
-    // })
-})
+    const response = await request.get(url);
+    expect(response.statusCode).toBe(400);
+
+    console.log(response.text);
+  });
+
+  it('expect status 400 when request an image with negative dimension', async () => {
+    const imageName = 'fjord';
+    expect(fileExists(imageName)).toBeTrue();
+
+    const dimension = -200;
+    const url = `/api/images?filename=${imageName}&width=${dimension}&height=${dimension}`;
+
+    const response = await request.get(url);
+    expect(response.statusCode).toBe(400);
+
+    console.log(response.text);
+  });
+
+  it('expect status 400 when request an image with 0 dimension', async () => {
+    const imageName = 'fjord';
+    expect(fileExists(imageName)).toBeTrue();
+
+    const dimension = 0;
+    const url = `/api/images?filename=${imageName}&width=${dimension}&height=${dimension}`;
+
+    const response = await request.get(url);
+    expect(response.statusCode).toBe(400);
+
+    console.log(response.text);
+  });
+
+  it('expect status 400 when request an image and does not provide dimension', async () => {
+    const imageName = 'fjord';
+    expect(fileExists(imageName)).toBeTrue();
+
+    const url = `/api/images?filename=${imageName}`;
+
+    const response = await request.get(url);
+    expect(response.statusCode).toBe(400);
+  });
+});
