@@ -2,22 +2,23 @@ import sharp from 'sharp';
 import path from 'path';
 import fs from 'fs';
 
-export const fileExists = (fileName: string): boolean => {
-  const imageLocation = path.join(
-    __dirname,
-    '../../images/',
-    `${fileName}.jpg`
-  );
-  const exist = fs.existsSync(imageLocation);
+const createImagePath = (filename: string) => {
+  const imagePath = path.join(__dirname, '../../images/', `${filename}.jpg`);
+  return imagePath;
+};
+
+export const fileExists = (imageName: string): boolean => {
+  const imagePath = createImagePath(imageName);
+  const exist = fs.existsSync(imagePath);
   return exist;
 };
 
-const createSuccessObject = (outputImage: string) => {
-  return { success: true, outputImage, error: undefined };
+const createSuccessObject = (outputImage: string, cache: boolean) => {
+  return { success: true, outputImage, cache, error: undefined };
 };
 
 const createFailureObject = (error: string) => {
-  return { success: false, outputImage: undefined, error };
+  return { success: false, outputImage: undefined, cache: false, error };
 };
 
 export const resize = async (
@@ -27,6 +28,7 @@ export const resize = async (
 ): Promise<{
   success: boolean;
   outputImage: undefined | string;
+  cache: boolean;
   error: undefined | string;
 }> => {
   if (!imageName) return createFailureObject('The filename is missing');
@@ -36,21 +38,16 @@ export const resize = async (
   if (!fileExists(imageName))
     return createFailureObject('The required image does not exist');
 
-  const inputImage = path.join(__dirname, '../../images', `${imageName}.jpg`);
-
   // output filename is something like : fileNamexWidthxHeight.jpg
   try {
-    const outputImage = path.join(
-      __dirname,
-      '../../images',
-      `${imageName}x${width}x${height}.jpg`
-    );
-
+    const outputImage = `${imageName}x${width}x${height}`;
+    const outputPath = createImagePath(outputImage);
     // if the outputImage already exist => we return that output image, otherwise, we need to use sharp to write image to that file
-    if (fileExists(outputImage)) return createSuccessObject(outputImage);
+    if (fileExists(outputImage)) return createSuccessObject(outputPath, true);
 
-    await sharp(inputImage).resize(width, height).jpeg().toFile(outputImage);
-    return createSuccessObject(outputImage);
+    const inputPath = createImagePath(imageName);
+    await sharp(inputPath).resize(width, height).jpeg().toFile(outputPath);
+    return createSuccessObject(outputPath, false);
   } catch (err) {
     return createFailureObject('Unable to resize the image');
   }

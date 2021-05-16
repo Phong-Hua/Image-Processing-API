@@ -58,4 +58,15 @@ describe('Test image processor using sharp', () => {
     const result = await resize(imageName, dimension, dimension);
     expect(result.success).toBeFalse();
   });
+
+  it('expect return image that is cached when output image already exist', async () => {
+    const imageName = 'fjord';
+    const dimension = 200;
+    const result = await resize(imageName, dimension, dimension);
+    expect(result.success).toBeTrue();
+
+    const anotherResize = await resize(imageName, dimension, dimension);
+    expect(anotherResize.success).toBeTrue();
+    expect(anotherResize.cache).toBeTrue();
+  });
 });

@@ -38,8 +38,6 @@ describe('Testing image endpoint', () => {
 
     const response = await request.get(url);
     expect(response.statusCode).toBe(400);
-
-    console.log(response.text);
   });
 
   it('expect status 400 when request an image with 0 dimension', async () => {
@@ -51,8 +49,6 @@ describe('Testing image endpoint', () => {
 
     const response = await request.get(url);
     expect(response.statusCode).toBe(400);
-
-    console.log(response.text);
   });
 
   it('expect status 400 when request an image and does not provide dimension', async () => {
